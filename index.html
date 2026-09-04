@@ -219,7 +219,18 @@ color:#555;
 }
 }
 </style>
-<link rel="manifest" href="manifest.json"><link rel="icon" href="logo.jpg"></head><body><div class="report"><div class="topline"></div><header class="report-header"><div class="brand-wrap">${logo?`<img class="logo" src="${logo}">`:''}<div><div class="academy">${academy}</div>${contact?`<div class="contact">${contact}</div>`:''}</div></div><div class="report-chip">VIP ADMIN REPORT</div></header><div class="title-block"><div><h1>${title}</h1><p>${period||'Financial overview and academy records'}</p></div><div class="meta"><b>Generated:</b> ${dateText}<br><b>Time:</b> ${timeText}</div></div>${summary}<div class="table-wrap report-body">${reportHTML(t)}</div><footer class="footer"><span>${academy}</span><div style="margin-top:20px;text-align:center;font-weight:800;">Powered by Wasi Production</div></footer><div class="watermark">VISION ACADEMY • CONFIDENTIAL</div></div></body></html>`);
+<link rel="manifest" href="manifest.json"><link rel="icon" href="logo.jpg"></head><body><div class="report"><div class="topline"></div><header class="report-header"><div class="brand-wrap">${logo?`<img class="logo" src="${logo}">`:''}<div><div class="academy">${academy}</div>${contact?`<div class="contact">${contact}</div>`:''}</div></div><div class="report-chip">VIP ADMIN REPORT</div></header><div class="title-block"><div><h1>${title}</h1><p>${period||'Financial overview and academy records'}</p></div><div class="meta"><b>Generated:</b> ${dateText}<br><b>Time:</b> ${timeText}</div></div>${summary}<div class="table-wrap report-body">${reportHTML(t)}</div><footer class="footer"><span>${academy}</span><div style="margin-top:20px;text-align:center;font-weight:800;">Powered by Wasi Production</div></footer><div class="watermark">VISION ACADEMY • CONFIDENTIAL</div></div>
+<script>
+if ("serviceWorker" in navigator) {
+window.addEventListener("load", function () {
+navigator.serviceWorker.register("./sw.js", {scope:"./"})
+.then(function(){console.log("PWA Service Worker Ready");})
+.catch(function(err){console.log("SW Error:", err);});
+});
+}
+</script>
+
+</body></html>`);
  w.document.close();w.focus();setTimeout(()=>w.print(),450)
 }
 function changePassword(){
@@ -236,8 +247,3 @@ toast('Password changed successfully');
 function render(){norm();let q=($('search')?.value||'').toLowerCase();let ss=D.students.filter(s=>(s.name+' '+s.father+' '+s.phone+' '+s.cls).toLowerCase().includes(q));$('studentsTable').innerHTML=ss.map(s=>`<tr><td><b>${esc(s.name)}</b><br><small>${esc(s.code||'')}</small></td><td>${esc(s.father)}</td><td>${esc(s.phone)}</td><td>${esc(s.cls)}</td><td>${esc((s.subjects||[]).join(', ')||s.course||'-')}</td><td>${money(s.fee)}</td><td><div class="actions"><button class="soft" onclick="studentForm('${s.id}')">Edit</button><button class="danger" onclick="deleteStudent('${s.id}')">Delete</button></div></td></tr>`).join('')||'<tr><td colspan="7">No students yet</td></tr>';$('feesTable').innerHTML=D.fees.slice().reverse().map(f=>`<tr><td>${esc(D.students.find(s=>s.id===f.studentId)?.name||'Deleted')}</td><td>${f.month}</td><td>${money(f.amount)}</td><td>${f.date}</td><td><span class="badge">${f.status||((f.amount>0)?"Paid":"Pending")}</span></td></tr>`).join('')||'<tr><td colspan="5">No fees yet</td></tr>';$('attTable').innerHTML=D.attendance.slice().reverse().map(a=>`<tr><td>${a.date}</td><td>${esc(D.students.find(s=>s.id===a.studentId)?.name||'Deleted')}</td><td>${a.status}</td></tr>`).join('')||'<tr><td colspan="3">No attendance yet</td></tr>';$('expTable').innerHTML=D.expenses.slice().reverse().map(x=>`<tr><td>${x.date}</td><td>${esc(x.title)}</td><td>${esc(x.category)}</td><td>${money(x.amount)}</td></tr>`).join('')||'<tr><td colspan="4">No expenses yet</td></tr>';let inc=D.fees.reduce((a,x)=>a+x.amount,0),ex=D.expenses.reduce((a,x)=>a+x.amount,0),today=new Date().toISOString().slice(0,10),currentMonth=new Date().toISOString().slice(0,7),expected=D.students.reduce((a,s)=>a+Number(s.fee||0),0),currentCollected=D.fees.filter(f=>f.month===currentMonth&&D.students.some(s=>s.id===f.studentId)).reduce((a,x)=>a+Number(x.amount||0),0);$('ks').textContent=D.students.length;$('kf').textContent=money(inc);$('kp').textContent=money(Math.max(0,expected-currentCollected));$('kb').textContent=money(inc-ex);let todayAtt={};D.attendance.filter(a=>a.date===today).forEach(a=>todayAtt[a.studentId]=a);let todayList=Object.values(todayAtt);$('pr').textContent=todayList.filter(a=>String(a.status).toLowerCase()==='present').length;$('lv').textContent=todayList.filter(a=>String(a.status).toLowerCase()==='leave').length;$('ab').textContent=todayList.filter(a=>String(a.status).toLowerCase()==='absent').length;$('activity').innerHTML=D.activity.slice(0,6).map((x,i)=>{let t=String(x), icon=t.toLowerCase().includes('fee')?'💰':t.toLowerCase().includes('attendance')?'📅':t.toLowerCase().includes('student')?'👤':'📝';return `<div class="activity-item"><div class="activity-icon">${icon}</div><div class="activity-text"><b>${esc(t)}</b><small>Academy activity update</small></div><span class="activity-time">${i+1}h ago</span></div>`}).join('')||'No activity yet.';$('an').value=D.settings.name;$('ap').value=D.settings.phone;$('aa').value=D.settings.address;renderReports()}
 render();setTimeout(connectFirebase,500);
 </script></body></html>
-<script>
-if ('serviceWorker' in navigator) {
- navigator.serviceWorker.register('/Vision-academy-/service-worker.js',{scope:'/Vision-academy-/'});
-}
-</script>

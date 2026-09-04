@@ -238,29 +238,6 @@ render();setTimeout(connectFirebase,500);
 </script></body></html>
 <script>
 if ('serviceWorker' in navigator) {
- navigator.serviceWorker.register('service-worker.js');
+ navigator.serviceWorker.register('/Vision-academy-/service-worker.js',{scope:'/Vision-academy-/'});
 }
-</script>
-
-<style>
-#installBtn{
-position:fixed;bottom:20px;right:20px;z-index:9999;
-padding:12px 18px;border-radius:30px;
-background:#5b21b6;color:white;border:0;font-weight:bold;
-}
-</style>
-<button id="installBtn" style="display:none">Install App</button>
-<script>
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e)=>{
- e.preventDefault();
- deferredPrompt=e;
- document.getElementById('installBtn').style.display='block';
-});
-document.getElementById('installBtn').onclick=async()=>{
- if(deferredPrompt){
-  deferredPrompt.prompt();
-  deferredPrompt=null;
- }
-};
 </script>

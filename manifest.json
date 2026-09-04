@@ -1,8 +1,8 @@
 {
   "name": "Vision Academy Admin",
   "short_name": "Vision Admin",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/Vision-academy-/",
+  "scope": "/Vision-academy-/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#5b21b6",
